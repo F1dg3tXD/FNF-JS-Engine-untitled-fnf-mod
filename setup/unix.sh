@@ -4,8 +4,8 @@
 # https://haxe.org/download
 echo Installing dependencies...
 echo This might take a few moments depending on your internet speed.
-sudo apt update
-sudo apt install libgtk-3-dev libgl-dev libx11-dev libxi-dev libxpm-dev libxrandr-dev libncurses-dev
+sudo pacman -Syu
+sudo pacman -S libgtk-3-dev libgl-dev libx11-dev libxi-dev libxpm-dev libxrandr-dev libncurses-dev
 haxelib git lime https://github.com/JS-Engine-things/lime-8.1.2 --quiet
 haxelib git openfl https://github.com/JS-Engine-things/openfl --quiet
 haxelib git flixel https://github.com/JS-Engine-things/flixel-JS-Engine --quiet

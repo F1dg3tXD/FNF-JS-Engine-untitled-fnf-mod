@@ -436,7 +436,6 @@ class PlayState extends MusicBeatState
 			FlxG.fixedTimestep = true;
 			FlxG.animationTimeScale = ClientPrefs.framerate / targetFPS;
 			if (!ClientPrefs.oldFFmpegMode) initRender(renderPath);
-			FlxG.signals.preStateSwitch.addOnce(() -> stopRender());
 		}
 
 		if (noteLimit == 0) noteLimit = 2147483647;
@@ -1990,49 +1989,53 @@ class PlayState extends MusicBeatState
 
 	public static function formatCompactNumber(number:Float):String
 	{
-		var suffixes1:Array<String> = ['', 'mi', 'bi', 'tri', 'quadri', 'quinti', 'sexti', 'septi', 'octi', 'noni'];
-	var tenSuffixes:Array<Array<String>> = [['', '', ''], ['deci', 'n', ''], ['viginti', 'm', 's'], ['trigenti', 'n', 's'], ['quadraginti', 'n', 's'], ['quinquaginti', 'n', 's'], ['sexaginti', 'n', ''], ['septuaginti', 'n', ''],['octoginti', 'm', 'x'], ['nonaginti', '', '']];
-	var decSuffixes:Array<Array<Dynamic>> = [['', false], ['un', false], ['duo', false], ['tre', true], ['quattuor', false], ['quin', false], ['se', true], ['septe', true], ['octo', false], ['nove', true]];
-	var centiSuffixes:Array<Array<String>> = [['', '', ''], ['centi', 'n', 'x'], ['ducenti', 'n', ''], ['trecenti', 'n', 's'], ['quadringenti', 'n', 's'], ['quingenti', 'n', 's'], ['sescenti', 'n', ''], ['septingenti', 'n', ''], ['octingenti', 'm', 'x'], ['nongenti', '', '']];
+		var suffixes1:Array<String> = ['ni', 'mi', 'bi', 'tri', 'quadri', 'quinti', 'sexti', 'septi', 'octi', 'noni'];
+		var tenSuffixes:Array<String> = ['', 'deci', 'viginti', 'triginti', 'quadraginti', 'quinquaginti', 'sexaginti', 'septuaginti', 'octoginti', 'nonaginti', 'centi'];
+		var decSuffixes:Array<String> = ['', 'un', 'duo', 'tre', 'quattuor', 'quin', 'sex', 'septe', 'octo', 'nove'];
+		var centiSuffixes:Array<String> = ['centi', 'ducenti', 'trecenti', 'quadringenti', 'quingenti', 'sescenti', 'septingenti', 'octingenti', 'nongenti'];
 
-		var magnitude:Int = -1;
+		var magnitude:Int = 0;
 		var num:Float = number;
+		var tenIndex:Int = 0;
 
 		while (num >= 1000.0)
 		{
 			num /= 1000.0;
-      magnitude++;
+
+			if (magnitude == suffixes1.length - 1) {
+				tenIndex++;
+			}
+
+			magnitude++;
+
+			if (magnitude == 21) {
+				tenIndex++;
+				magnitude = 11;
+			}
 		}
 
-		// Determine which suffixes to use
-		var unitIndex:Int = Math.floor(magnitude % 10);
-		var tenIndex:Int = Math.floor((magnitude / 10) % 10);
-		var centiIndex:Int = Math.floor(magnitude / 100);
+		// Determine which set of suffixes to use
+		var suffixSet:Array<String> = (magnitude <= suffixes1.length) ? suffixes1 : ((magnitude <= suffixes1.length + decSuffixes.length) ? decSuffixes : centiSuffixes);
 
-		var unitSubSuffix1:String = tenIndex == 0 && centiIndex > 0 ? centiSuffixes[centiIndex][1] : tenSuffixes[tenIndex][1];
-		var unitSubSuffix2:String = tenIndex == 0 && centiIndex > 0 ? centiSuffixes[centiIndex][2] : tenSuffixes[tenIndex][2];
-		var unitSubSuffix3:String = unitIndex != 3 && unitIndex != 6 ? unitSubSuffix1 : unitIndex == 3 && unitSubSuffix2 == 'x' ? 's' : unitSubSuffix2;
+		// Use the appropriate suffix based on magnitude
+		var suffix:String = (magnitude <= suffixes1.length) ? suffixSet[magnitude - 1] : suffixSet[magnitude - 1 - suffixes1.length];
+		var tenSuffix:String = (tenIndex <= 10) ? tenSuffixes[tenIndex] : centiSuffixes[tenIndex - 11];
 
-		var unitSuffix:String = magnitude <= 10 ? suffixes1[unitIndex] : decSuffixes[unitIndex][0];
-		if (magnitude > 10 && decSuffixes[unitIndex][1]) unitSuffix += unitSubSuffix3;
-		var tenSuffix:String = tenSuffixes[tenIndex][0];
-		var centiSuffix:String = centiSuffixes[centiIndex][0];
-
-		var finalSuffix:String = unitSuffix + tenSuffix + centiSuffix;
-		var compactValue:Float = Math.floor(num * 100) / 100; // Use the floor value for the compact representation
+		// Use the floor value for the compact representation
+		var compactValue:Float = Math.floor(num * 100) / 100;
 
 		if (compactValue <= 0.001) {
 			return "0"; // Return 0 if compactValue = null
 		} else {
 			var illionRepresentation:String = "";
 
-			if (magnitude > -1) {
-				illionRepresentation += finalSuffix;
+			if (magnitude > 0) {
+				illionRepresentation += suffix + tenSuffix;
 			}
 
-				if (magnitude > 0) illionRepresentation += "llion";
+				if (magnitude > 1) illionRepresentation += "llion";
 
-			return compactValue + (magnitude == -1 ? "" : " ") + (magnitude == 0 ? 'thousand' : illionRepresentation);
+			return compactValue + (magnitude == 0 ? "" : " ") + (magnitude == 1 ? 'thousand' : illionRepresentation);
 		}
 	}
 
@@ -4572,12 +4575,20 @@ class PlayState extends MusicBeatState
 
 	public function restartSong(noTrans:Bool = true)
 	{
+		if (process != null) stopRender();
 		PlayState.instance.paused = true; // For lua
 		FlxG.sound.music.volume = 0;
 		vocals.volume = opponentVocals.volume = 0;
 
-		FlxTransitionableState.skipNextTransOut = noTrans;
-		FlxG.resetState();
+		if(noTrans)
+		{
+			FlxTransitionableState.skipNextTransOut = true;
+			FlxG.resetState();
+		}
+		else
+		{
+			FlxG.resetState();
+		}
 	}
 
 	public var totalPlayed:Int = 0;
@@ -6252,13 +6263,16 @@ class PlayState extends MusicBeatState
 
 	public static function stopRender():Void
 	{
-		if (!ClientPrefs.ffmpegMode || process == null)
+		if (!ClientPrefs.ffmpegMode)
 			return;
 
-		process?.stdin?.close();
+		if (process != null){
+			if (process.stdin != null)
+				process.stdin.close();
 
-		process?.close();
-		process?.kill();
+			process.close();
+			process.kill();
+		}
 
 		FlxG.autoPause = ClientPrefs.autoPause;
 	}

@@ -281,7 +281,7 @@ class TitleState extends MusicBeatState
 
     credTextShit.visible = false;
 
-    ngSpr = new FlxSprite(0, FlxG.height * 0.52).loadGraphic(Paths.image('newgrounds_logo'));
+    ngSpr = new FlxSprite(0, FlxG.height * 0.52).loadGraphic(Paths.image('newgrounds_logo_stolen'));
     add(ngSpr);
     ngSpr.visible = false;
     ngSpr.setGraphicSize(Std.int(ngSpr.width * 0.8));
@@ -470,12 +470,12 @@ class TitleState extends MusicBeatState
           deleteCoolText();
         case 6:
           #if PSYCH_WATERMARKS
-          createCoolText(['Not associated', 'with'], -40);
+          createCoolText(['Yeah we did it', 'we stole the tank!'], -40);
           #else
-          createCoolText(['In association', 'with'], -40);
+          createCoolText(['Yeah we did it', 'we stole the tank!'], -40);
           #end
         case 8:
-          addMoreText('newgrounds', -40);
+          addMoreText('Fuck you.', -40);
           ngSpr.visible = true;
         case 9:
           deleteCoolText();
@@ -487,11 +487,11 @@ class TitleState extends MusicBeatState
         case 13:
           deleteCoolText();
         case 14:
-          addMoreText('Friday');
+          addMoreText('VS');
         case 15:
-          addMoreText('Night');
+          addMoreText('insert');
         case 16:
-          addMoreText('Funkin');
+          addMoreText('name');
 
         case 17:
           skipIntro();
