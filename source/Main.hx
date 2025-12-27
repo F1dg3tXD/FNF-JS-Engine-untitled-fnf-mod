@@ -34,7 +34,7 @@ class Main extends Sprite {
 		initialState: InitState.new,
 		zoom: -1.0,
 		framerate: 60,
-		skipSplash: true,
+		skipSplash: false,
 		startFullscreen: false
 	};
 

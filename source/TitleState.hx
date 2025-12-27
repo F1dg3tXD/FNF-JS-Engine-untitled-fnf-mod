@@ -489,9 +489,9 @@ class TitleState extends MusicBeatState
         case 14:
           addMoreText('VS');
         case 15:
-          addMoreText('insert');
+          addMoreText('Yeah');
         case 16:
-          addMoreText('name');
+          addMoreText('IDK');
 
         case 17:
           skipIntro();
