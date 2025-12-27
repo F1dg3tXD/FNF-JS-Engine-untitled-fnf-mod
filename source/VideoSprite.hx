@@ -168,6 +168,10 @@ class VideoSprite extends FlxSpriteGroup
 @:nullSafety
 class FunkinVideoSprite extends FlxVideoSprite
 {
+  #if !HXVLC_HAS_AUTOPAUSE
+  public var autoPause:Bool = true;
+  #end
+
   public function new()
   {
     super();
@@ -182,23 +186,27 @@ class FunkinVideoSprite extends FlxVideoSprite
     if (!FlxG.autoPause) return;
     #end
 
-    if (autoPause && bitmap != null && bitmap.isPlaying)
-    {
+    if (getAutoPause() && bitmap != null && bitmap.isPlaying)
       pause();
-    }
   }
 
   function onFocusGainedInternal():Void
   {
-    if (autoPause && bitmap != null)
-    {
+    if (getAutoPause() && bitmap != null)
       resume();
-    }
+  }
+
+  inline function getAutoPause():Bool
+  {
+    #if HXVLC_HAS_AUTOPAUSE
+    return this.autoPause;
+    #else
+    return autoPause;
+    #end
   }
 
   override function destroy()
   {
-    // VERY IMPORTANT: prevent leaks
     FlxG.signals.focusLost.remove(onFocusLostInternal);
     FlxG.signals.focusGained.remove(onFocusGainedInternal);
     super.destroy();

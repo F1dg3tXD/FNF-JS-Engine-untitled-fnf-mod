@@ -77,7 +77,7 @@ jobs:
       - name: Compile
         run: |
           rm -f assets/preload/gameRenders/renderlol.bat
-          haxelib run lime build linux -D ${{ inputs.buildFlags || 'commit' }}
+          haxelib run lime build linux -D HXVLC_HAS_AUTOPAUSE -D ${{ inputs.buildFlags || 'commit' }}
       - name: Clear Previous Cache
         uses: actions/github-script@main
         with:
@@ -156,7 +156,7 @@ jobs:
       - name: Compile
         run: |
           Remove-Item -Force assets/preload/gameRenders/renderlinux.sh
-          haxelib run lime build windows -D ${{ inputs.buildFlags || 'commit' }}
+          haxelib run lime build windows -D HXVLC_HAS_AUTOPAUSE -D ${{ inputs.buildFlags || 'commit' }}
       - name: Clear Previous Cache
         uses: actions/github-script@main
         with:
@@ -234,7 +234,7 @@ jobs:
       - name: Compile
         run: |
           rm -f assets/preload/gameRenders/renderlol.bat
-          haxelib run lime build mac -64 -D ${{ inputs.buildFlags || 'commit' }} -D HXCPP_M64
+          haxelib run lime build mac -64 -D HXVLC_HAS_AUTOPAUSE -D ${{ inputs.buildFlags || 'commit' }} -D HXCPP_M64
       - name: Clear Previous Cache
         uses: actions/github-script@main
         with:
@@ -313,7 +313,7 @@ jobs:
       - name: Compile
         run: |
           rm -f assets/preload/gameRenders/renderlol.bat
-          haxelib run lime build mac -arm64 -D ${{ inputs.buildFlags || 'commit' }} -D HXCPP_ARM64
+          haxelib run lime build mac -arm64 -D HXVLC_HAS_AUTOPAUSE -D ${{ inputs.buildFlags || 'commit' }} -D HXCPP_ARM64
       - name: Clear Previous Cache
         uses: actions/github-script@main
         with:
