@@ -188,21 +188,21 @@ class FunkinVideoSprite extends FlxVideoSprite
       super.onFocusGained();
     }
    */
-  @:noCompletion
-  override function onFocusLost():Void
-  {
-    #if !mobile
-    if (!FlxG.autoPause) return;
-    #end
+  // @:noCompletion
+  // override function onFocusLost():Void
+  // {
+  //   #if !mobile
+  //   if (!FlxG.autoPause) return;
+  //   #end
 
-    if (autoPause)
-    {
-      resumeOnFocus = bitmap.isPlaying;
-      pause();
-    }
-    else
-      resumeOnFocus = false;
+  //   if (autoPause)
+  //   {
+  //     resumeOnFocus = bitmap.isPlaying;
+  //     pause();
+  //   }
+  //   else
+  //     resumeOnFocus = false;
 
-    super.onFocusLost();
-  }
+  //   super.onFocusLost();
+  // }
 }
